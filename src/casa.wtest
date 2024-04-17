@@ -1,0 +1,61 @@
+import casa.*
+
+test "Al romper algo de 1000 tiene viveres suficientes pero requiere reparaciones (no está en orden)" {
+    casaDePepeYJulian.porcentajeViveres(40)
+    casaDePepeYJulian.romper(1000)
+	assert.that(casaDePepeYJulian.hayViveresSuficientes())
+	assert.that(casaDePepeYJulian.necesitaReparaciones())
+	assert.notThat(casaDePepeYJulian.estaEnOrden())
+}
+
+test "Cuenta con gastos con costo de operacion de 20 y saldo 0 al depositar 1000 su saldo es 980" {
+	cuentaConGastos.costoOperativo(20)
+	cuentaConGastos.depositar(1000)
+	assert.equals(980, cuentaConGastos.saldo())
+}
+
+test "cuentaCombinada con cuenta gasto como primaria con 50 de costo operativo 
+	 y corriente como secundaria con 500 al depositar 100 queda en 50, 
+	 al extraer 200 salen de la secudnaria quedando en 300, por lo que el saldo es de 350." {
+	cuentaConGastos.costoOperativo(50)
+	cuentaCorriente.depositar(500)
+	
+	cuentaCombinada.cuentaPrimaria(cuentaConGastos)
+	cuentaCombinada.cuentaSecundaria(cuentaCorriente)
+	cuentaCombinada.depositar(100)
+ 	cuentaCombinada.extraer(200)
+ 	
+	assert.equals( 50,cuentaConGastos.saldo())
+	assert.equals(300,cuentaCorriente.saldo())
+	assert.equals(350,cuentaCombinada.saldo())
+}
+
+/*
+#### Para pensar: Si se agrega una nueva casa, ¿Es posible usar estas estrategias con ella? ¿Qué mensajes debería entender? 
+-Sí, Debería entender calidad() y aplicar(casa). 
+-A su vez la casa debería entender
+ * realizarReparaciones() , * aumentarViveres(porcentaje), * cantidadViveresAlcanzar(porcentaje), * estaEnOrden()
+ * sePuedeReparar() podría implementarse en Full directo y que solo se necesite: montoReparaciones en casa.	
+*/
+ 
+test "Casa con viveres al 50%, 100 en reparaciones, con cuenta corriente con saldo $1000 y estrategia de ahorro Full
+    Al hacer un mantenimiento:
+     -Al no estar en orden, aumenta 40% de sus víveres gastando `40 * 5 = 200` pesos.
+	 -No se hacen reparaciones por no sobrar 1000 si s ehiciesen.
+	 -Queda con viveres al 90%, $100 en reparaciones, y la cuenta corriente con saldo $800."{
+	casaDePepeYJulian.porcentajeViveres(50)
+    casaDePepeYJulian.romper(100)
+    
+    casaDePepeYJulian.estrategia(estrategiaFull)
+	
+	casaDePepeYJulian.cuenta(cuentaCorriente)
+	cuentaCorriente.depositar(800)
+	
+	casaDePepeYJulian.realizarMantenimiento()
+	
+	assert.that(casaDePepeYJulian.necesitaReparaciones())
+	assert.equals(90, casaDePepeYJulian.porcentajeViveres())
+	assert.equals(800, cuentaCorriente.saldo())
+}
+
+
