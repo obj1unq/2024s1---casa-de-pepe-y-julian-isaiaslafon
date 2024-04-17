@@ -1,5 +1,5 @@
 object casaDePepeYJulian {
-	var property porcentajeViveres = 0
+	var property porcentajeViveres = 0 //Se usa property porque luego al testear si usamos comprar viveres se gasta dinero de la cuenta.
 	var montoReparaciones = 0
 	var property cuenta = cuentaCorriente
 	var estrategia = estrategiaMinima
